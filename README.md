@@ -3,7 +3,7 @@
 Calculator REST API built with Java 21, Spring Boot and Maven, deployed through a CI/CD pipeline using GitHub, Jenkins, Docker and Docker Compose.
 
 ```
-GitHub (webhook) -> Jenkins -> Maven build and test -> Docker image -> Docker Hub -> Docker Compose
+ GitHub (webhook) -> Jenkins -> Maven build and test -> Docker image -> Docker Hub -> Docker Compose (Nginx + API)
 ```
 
 ## Tech stack
@@ -57,6 +57,35 @@ docker build -t kavyag3011/calculator-devops:dev .
 ```
 
 The image runs as a non-root user and includes a health check on `/actuator/health`; `docker ps` shows the container as `healthy` once the application has started.
+
+## Deploy with Docker Compose
+
+The stack runs the API behind an Nginx reverse proxy:
+
+```
+client --:8000--> nginx --(backend network)--> calculator:8081
+```
+
+```bash
+docker compose up -d          # start (builds the image if it is missing)
+docker compose ps             # both services should show (healthy)
+curl "http://localhost:8000/api/v1/add?a=2&b=3"
+docker compose logs -f        # follow logs
+docker compose down           # stop and remove containers and networks
+```
+
+| Service | Image | Notes |
+|---|---|---|
+| `calculator` | `kavyag3011/calculator-devops` | Not published to the host; reachable only through Nginx. Health check on `/actuator/health`, `restart: unless-stopped`. |
+| `nginx` | `nginx:1.27-alpine` | Published on port 8000. Forwards `/api/` and `/actuator/health`; everything else returns 404. Starts after the API is healthy. |
+
+Configuration is read from environment variables (defaults in brackets). Copy `.env.example` to `.env` to override them:
+
+| Variable | Purpose |
+|---|---|
+| `IMAGE_NAME` | Calculator image name (`kavyag3011/calculator-devops`) |
+| `IMAGE_TAG` | Calculator image tag (`dev`) |
+| `NGINX_PORT` | Host port for Nginx (`8000`) |
 
 ## API
 
