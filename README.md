@@ -41,6 +41,23 @@ The API listens on port **8081** by default. Set `SERVER_PORT` to use a differen
 SERVER_PORT=9090 java -jar target/calculator.jar
 ```
 
+## Run with Docker
+
+The image is published on Docker Hub: [kavyag3011/calculator-devops](https://hub.docker.com/r/kavyag3011/calculator-devops)
+
+```bash
+docker run -d --name calculator -p 8081:8081 kavyag3011/calculator-devops:dev
+curl "http://localhost:8081/api/v1/add?a=2&b=3"
+```
+
+Build the image locally:
+
+```bash
+docker build -t kavyag3011/calculator-devops:dev .
+```
+
+The image runs as a non-root user and includes a health check on `/actuator/health`; `docker ps` shows the container as `healthy` once the application has started.
+
 ## API
 
 All endpoints take two numeric query parameters, `a` and `b`, and return JSON.
