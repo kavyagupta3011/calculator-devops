@@ -3,7 +3,7 @@
 Calculator REST API built with Java 21, Spring Boot and Maven, deployed through a CI/CD pipeline using GitHub, Jenkins, Docker and Docker Compose.
 
 ```
-GitHub -> Jenkins -> Maven build and test -> Docker image -> Docker Hub -> Docker Compose
+GitHub (webhook) -> Jenkins -> Maven build and test -> Docker image -> Docker Hub -> Docker Compose
 ```
 
 ## Tech stack
