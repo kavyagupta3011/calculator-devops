@@ -1,3 +1,5 @@
+def appImage
+
 pipeline {
     agent any
 
@@ -10,6 +12,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'kavyag3011/calculator-devops'
+        // main builds are tagged with the plain build number, other branches get a prefix
+        IMAGE_TAG = "${env.BRANCH_NAME == 'main' ? env.BUILD_NUMBER : env.BRANCH_NAME.replaceAll('[^A-Za-z0-9_.-]', '-') + '-' + env.BUILD_NUMBER}"
     }
 
     stages {
@@ -34,6 +38,15 @@ pipeline {
                 always {
                     junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: false
                 }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    appImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                }
+                sh 'docker images "$IMAGE_NAME" --format "{{.Repository}}:{{.Tag}}  {{.Size}}" | head -5'
             }
         }
     }
