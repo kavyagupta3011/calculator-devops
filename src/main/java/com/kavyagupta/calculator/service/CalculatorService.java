@@ -25,7 +25,7 @@ public class CalculatorService {
 
     public BigDecimal divide(BigDecimal a, BigDecimal b) {
         if (b.signum() == 0) {
-            throw new ArithmeticException("Division by zero is not allowed");
+            throw new ArithmeticException("Cannot divide by zero");
         }
         return normalize(a.divide(b, PRECISION));
     }
