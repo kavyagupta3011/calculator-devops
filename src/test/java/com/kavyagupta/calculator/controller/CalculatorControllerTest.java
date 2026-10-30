@@ -102,4 +102,19 @@ class CalculatorControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Parameter 'a' must be a number, but was 'Infinity'"));
     }
+
+    @Test
+    void moduloReturnsResult() throws Exception {
+        mockMvc.perform(get("/api/v1/modulo").param("a", "10").param("b", "3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.operation").value("modulo"))
+                .andExpect(jsonPath("$.result").value(1));
+    }
+
+    @Test
+    void moduloByZeroReturns400() throws Exception {
+        mockMvc.perform(get("/api/v1/modulo").param("a", "10").param("b", "0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Modulo by zero is not allowed"));
+    }
 }

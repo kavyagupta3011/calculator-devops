@@ -30,6 +30,13 @@ public class CalculatorService {
         return normalize(a.divide(b, PRECISION));
     }
 
+    public BigDecimal modulo(BigDecimal a, BigDecimal b) {
+        if (b.signum() == 0) {
+            throw new ArithmeticException("Modulo by zero is not allowed");
+        }
+        return normalize(a.remainder(b, PRECISION));
+    }
+
     // 5.000 -> 5, 2.50 -> 2.5
     private BigDecimal normalize(BigDecimal value) {
         return value.signum() == 0 ? BigDecimal.ZERO : value.stripTrailingZeros();

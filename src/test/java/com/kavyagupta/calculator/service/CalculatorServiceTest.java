@@ -64,6 +64,26 @@ class CalculatorServiceTest {
                 .isEqualByComparingTo(expected);
     }
 
+    @ParameterizedTest(name = "{0} % {1} = {2}")
+    @CsvSource({
+            "10, 3, 1",
+            "-10, 3, -1",
+            "7.5, 2, 1.5",
+            "6, 3, 0"
+    })
+    void modulo(String a, String b, String expected) {
+        assertThat(calculator.modulo(new BigDecimal(a), new BigDecimal(b)))
+                .isEqualByComparingTo(expected);
+    }
+
+    @Test
+    @DisplayName("modulo by zero throws ArithmeticException")
+    void moduloByZero() {
+        assertThatThrownBy(() -> calculator.modulo(BigDecimal.TEN, BigDecimal.ZERO))
+                .isInstanceOf(ArithmeticException.class)
+                .hasMessage("Modulo by zero is not allowed");
+    }
+
     @Test
     @DisplayName("divide by zero throws ArithmeticException")
     void divideByZero() {
